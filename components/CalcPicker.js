@@ -12,7 +12,7 @@ const CalcPicker = props => {
     <View>
       <Picker
         selectedValue={pickerValue.value}
-        style={{ height: 50, width: "100%" }}
+        style={{ height: 50, width: "90%" }}
         onValueChange={(itemValue, itemIndex) => {
           const chosenCalc = availableCalcs.filter(
             calc => calc.value === itemValue
