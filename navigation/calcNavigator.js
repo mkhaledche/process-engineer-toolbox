@@ -23,7 +23,7 @@ const defaultStackNavOptions = {
 const calcNavigator = createStackNavigator(
   {
     Calculations: {
-      screen: CalcMainScreen
+      screen: calcMainScreen
     },
     LineSizing: {
       screen: lineSizingScreen
