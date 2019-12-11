@@ -61,21 +61,29 @@ const lineSizingCalculationInputs = [
 
 const lineSizingContext = React.createContext({
   calculations: lineSizingCalculations,
-  calculationInputs: lineSizingCalculationInputs
+  calculationInputs: lineSizingCalculationInputs,
+  handleCalculation: (availableCalcs, value) => {
+    const chosenCalc = availableCalcs.filter(
+        calc => calc.value === value
+      );
+      this.calculations = chosenCalc;
+}
 });
 
 const lineSizingScreen = props => {
-  const [stateLineSizingContext, setstateLineSizingContext] = useState({
+  const [stateLineSizingContext, setstateLineSizingContext] = useReducer({
     calculations: lineSizingCalculations,
     calculationInputs: lineSizingCalculationInputs
-  });
+  }, CalcContext.calcReducer);
+
+  const {calculations, calculationInputs} = stateLineSizingContext
 
   return (
-    <CalcContext.Provider value={stateLineSizingContext}>
+    <CalcContext.Provider value={setstateLineSizingContext}>
       <ScrollView>
         <CalcPicker
-          initialValue={lineSizingContext[0][0]}
-          availableCalcs={lineSizingContext[0]}
+          initialValue={calculations[0]}
+          availableCalcs={calculations}
         ></CalcPicker>
         <CalcInputs></CalcInputs>
       </ScrollView>

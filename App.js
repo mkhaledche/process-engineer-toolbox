@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Text, View } from "react-native";
 import * as Font from "expo-font";
 import { AppLoading } from "expo";
-import { enableScreens } from 'react-native-screens';
+//import { enableScreens } from 'react-native-screens';
 
 import CalcNavigator from "./navigation/calcNavigator";
 
- enableScreens();
+//enableScreens();
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -18,7 +18,6 @@ const fetchFonts = () => {
 export default function App() {
   const [fontLoaded, setFontLoaded] = useState(false);
 
-
   if (!fontLoaded) {
     return (
       <AppLoading
@@ -28,5 +27,5 @@ export default function App() {
     );
   }
 
-  return <CalcNavigator/>;
+  return <CalcNavigator />;
 }

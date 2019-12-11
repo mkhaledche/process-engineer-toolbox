@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Picker, View } from "react-native";
 import CalcContext from "../context/CalcContext";
 
@@ -13,11 +13,13 @@ const CalcPicker = props => {
       <Picker
         selectedValue={pickerValue.value}
         style={{ height: 50, width: "90%" }}
-        onValueChange={(itemValue, itemIndex) => {
-          const chosenCalc = availableCalcs.filter(
-            calc => calc.value === itemValue
-          );
-          setPickerValue(chosenCalc[0]);
+        onValueChange={itemValue => {
+          dispatch({ type: "SWITCH_TO_CALC", value: itemValue });
+          setPickerValue((pickerValue, itemValue) => {
+            const chosenCalc = pickerValue.filter(
+              calc => calc.value === itemValue
+            );
+          });
         }}
       >
         {availableCalcs.map((item, index) => {

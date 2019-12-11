@@ -1,14 +1,21 @@
 import React from "react";
 import { View, Text, Picker } from "react-native";
-import TextInput from "react-native-paper";
+import { TextInput } from "react-native-paper";
 
-const CalcInput = () => {
+const CalcInput = props => {
+  const handleChangeInput = () => {};
+  const handleChangePicker = () => {};
   return (
     <View>
       <Text>{}</Text>
-      <TextInput label={} value={} onChangeText={} mode="outlined"></TextInput>
-      <Picker selectedValue={} style={} onValueChange={}>
-        <Picker.Item label={} value={} />
+      <TextInput
+        label="Label"
+        value="Value"
+        onChangeText={handleChange}
+        mode="outlined"
+      ></TextInput>
+      <Picker selectedValue="{}" onValueChange={handleChangePicker}>
+        <Picker.Item label="{}" value="{}" />
       </Picker>
     </View>
   );
