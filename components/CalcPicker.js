@@ -3,24 +3,18 @@ import { Picker, View } from "react-native";
 import CalcContext from "../context/CalcContext";
 
 const CalcPicker = props => {
-  const [pickerValue, setPickerValue] = useState(props.initialValue);
   const { availableCalcs } = props;
-  const calcState = useContext(CalcContext);
-  console.log(CalcContext);
+  const dispatch = useContext(CalcContext)[1];
 
   return (
     <View>
       <Picker
-        selectedValue={pickerValue.value}
-        style={{ height: 50, width: "90%" }}
+        selectedValue={props.initialValue.value}
+        style={{ height: 50, width: "100%" }}
         onValueChange={itemValue => {
           dispatch({ type: "SWITCH_TO_CALC", value: itemValue });
-          setPickerValue((pickerValue, itemValue) => {
-            const chosenCalc = pickerValue.filter(
-              calc => calc.value === itemValue
-            );
-          });
-        }}
+        }
+        }
       >
         {availableCalcs.map((item, index) => {
           return (

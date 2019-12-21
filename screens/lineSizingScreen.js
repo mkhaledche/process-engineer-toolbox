@@ -1,94 +1,149 @@
-import React, { useState } from "react";
-import { ScrollView } from "react-native";
-import CalcPicker from "../components/CalcPicker";
-import CalcInputs from "../components/CalcInputs";
-import CalcContext from "../context/CalcContext";
+import React, { useState, useReducer } from 'react';
+import {
+  View,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+} from 'react-native';
+import CalcPicker from '../components/CalcPicker';
+import CalcInputs from '../components/CalcInputs';
+import CalcContext, { calcReducer } from '../context/CalcContext';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 
 const lineSizingCalculations = [
-  { label: "Choose the line sizing calculation", value: "" },
+  { label: 'Choose the line sizing calculation', value: '' },
   {
-    label: "Pump Suction",
-    value: "pump-suction",
-    maxVel: { value: 1, unit: "m/s" },
-    maxDeltaP: { initValue: 0.2, unit: "bar/km" }
+    label: 'Pump Suction',
+    value: 'pump-suction',
+    maxVel: { criteria: 'Maximum Velocity', value: 1, unit: 'm/s' },
+    maxDeltaP: {
+      criteria: 'Maximum Pressure Drop',
+      initValue: '0.2',
+      unit: 'bar/km',
+    },
   },
   {
-    label: "Pump Discharge",
-    value: "pump-discharge",
-    maxVel: { value: 4.5, unit: "m/s" },
-    maxDeltaP: { initValue: 1, unit: "bar/km" }
-  }
+    label: 'Pump Discharge',
+    value: 'pump-discharge',
+    maxVel: { value: '4.5', unit: 'm/s' },
+    maxDeltaP: { initValue: '1', unit: 'bar/km' },
+  },
 ];
 
 const lineSizingCalculationInputs = [
   {
-    volFlowRate: {
-      initValue: 0,
-      unit: "CuMeter/hr"
-    }
+    name: 'Flow Rate',
+    value: '0',
+    unit: 'm3/hr',
+    unitType: 'vFR',
+    unitFactor: 1
   },
   {
-    density: {
-      initValue: 0,
-      unit: "kg/CuMeter"
-    }
+    name: 'Density',
+    value: '0',
+    unit: 'kg/m3',
+    unitType: 'density',
+    unitFactor: 1
   },
   {
-    viscosity: {
-      initValue: 0,
-      unit: "cP"
-    }
+    name: 'Viscosity',
+    value: '0',
+    unit: 'cP',
+    unitType: 'viscosity',
+    unitFactor: 1
   },
   {
-    massFlowRate: {
-      initValue: 0,
-      unit: "kg/hr"
-    }
+    name: 'Mass Flow Rate',
+    value: '0',
+    unit: 'kg/hr',
+    unitType: 'mFR',
+    unitFactor: 1
   },
   {
-    pipeDiameter: {
-      initValue: 2,
-      unit: "in"
-    }
+    name: 'Pipe diameter',
+    value: '2',
+    unit: 'in',
+    unitType: 'size',
+    unitFactor: 1
   },
   {
-    pipeDistance: {
-      initValue: 0,
-      unit: "m"
-    }
+    name: 'Pipe Distance',
+    value: '0',
+    unit: 'm',
+    unitType: 'length',
+    unitFactor: 1
   }
 ];
 
-const lineSizingContext = React.createContext({
-  calculations: lineSizingCalculations,
-  calculationInputs: lineSizingCalculationInputs,
-  handleCalculation: (availableCalcs, value) => {
-    const chosenCalc = availableCalcs.filter(
-        calc => calc.value === value
-      );
-      this.calculations = chosenCalc;
-}
-});
-
+const lineSizingCriteria = [
+  {
+    service: 'Pump Suction',
+    criteria: 'Maximum Velocity',
+    value: '1',
+    unit: 'm/s',
+    unitType: 'velocity',
+    unitFactor: 1
+  },
+  {
+    service: 'Pump Suction',
+    criteria: 'Maximum Pressure Drop',
+    value: '0.2',
+    unit: 'bar/km',
+    unitType: 'dpc',
+    unitFactor: 1
+  },
+  {
+    service: 'Pump Discharge',
+    criteria: 'Maximum Velocity Drop',
+    value: '4.5',
+    unit: 'm/s',
+    unitType: 'velocity',
+    unitFactor: 1
+  },
+  {
+    service: 'Pump Discharge',
+    criteria: 'Maximum Pressure Drop',
+    value: '1',
+    unit: 'bar/km',
+    unitType: 'dpc',
+    unitFactor: 1
+  },
+];
 const lineSizingScreen = props => {
-  const [stateLineSizingContext, setstateLineSizingContext] = useReducer({
-    calculations: lineSizingCalculations,
-    calculationInputs: lineSizingCalculationInputs
-  }, CalcContext.calcReducer);
+  const [stateLineSizingContext, setstateLineSizingContext] = useReducer(
+    calcReducer,
+    {
+      calculations: lineSizingCalculations,
+      calculationInputs: lineSizingCalculationInputs,
+      sizingCriteria: lineSizingCriteria,
+    }
+  );
 
-  const {calculations, calculationInputs} = stateLineSizingContext
+  const {
+    calculations,
+    calculationInputs,
+    selectedCalc,
+  } = stateLineSizingContext;
+
+  const initValue = !selectedCalc ? calculations[0] : selectedCalc[0];
 
   return (
-    <CalcContext.Provider value={setstateLineSizingContext}>
-      <ScrollView>
-        <CalcPicker
-          initialValue={calculations[0]}
-          availableCalcs={calculations}
-        ></CalcPicker>
-        <CalcInputs></CalcInputs>
-      </ScrollView>
+    <CalcContext.Provider
+      value={[stateLineSizingContext, setstateLineSizingContext]}>
+      <CalcPicker initialValue={initValue} availableCalcs={calculations} />
+
+      <CalcInputs />
     </CalcContext.Provider>
   );
 };
+
+// const styles = StyleSheet.create({
+//   inner: {
+//     padding: 24,
+//     flex: 1,
+//     justifyContent: 'flex-end',
+//   },
+// });
 
 export default lineSizingScreen;
