@@ -3,7 +3,7 @@ import { View, ScrollView, TouchableOpacity, Text } from "react-native";
 import CalcOption from "../components/CalcOption";
 import availableCalcs from "../data/availableCalcs";
 
-const calcMainScreen = props => {
+const CalcMainScreen = props => {
   return (
     <ScrollView>
       {availableCalcs.map((item, index) => {
@@ -22,4 +22,4 @@ const calcMainScreen = props => {
   );
 };
 
-export default calcMainScreen;
+export default CalcMainScreen;

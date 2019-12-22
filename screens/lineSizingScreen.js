@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import {
   View,
   ScrollView,
@@ -10,6 +10,8 @@ import CalcPicker from '../components/CalcPicker';
 import CalcInputs from '../components/CalcInputs';
 import CalcContext, { calcReducer } from '../context/CalcContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import HeaderButton from '../components/UI/HeaderButton';
 
 const lineSizingCalculations = [
   { label: 'Choose the line sizing calculation', value: '' },
@@ -37,43 +39,43 @@ const lineSizingCalculationInputs = [
     value: '0',
     unit: 'm3/hr',
     unitType: 'vFR',
-    unitFactor: 1
+    unitFactor: 1,
   },
   {
     name: 'Density',
     value: '0',
     unit: 'kg/m3',
     unitType: 'density',
-    unitFactor: 1
+    unitFactor: 1,
   },
   {
     name: 'Viscosity',
     value: '0',
     unit: 'cP',
     unitType: 'viscosity',
-    unitFactor: 1
+    unitFactor: 1,
   },
   {
     name: 'Mass Flow Rate',
     value: '0',
     unit: 'kg/hr',
     unitType: 'mFR',
-    unitFactor: 1
+    unitFactor: 1,
   },
   {
     name: 'Pipe diameter',
     value: '2',
     unit: 'in',
     unitType: 'size',
-    unitFactor: 1
+    unitFactor: 1,
   },
   {
     name: 'Pipe Distance',
     value: '0',
     unit: 'm',
     unitType: 'length',
-    unitFactor: 1
-  }
+    unitFactor: 1,
+  },
 ];
 
 const lineSizingCriteria = [
@@ -83,7 +85,7 @@ const lineSizingCriteria = [
     value: '1',
     unit: 'm/s',
     unitType: 'velocity',
-    unitFactor: 1
+    unitFactor: 1,
   },
   {
     service: 'Pump Suction',
@@ -91,7 +93,7 @@ const lineSizingCriteria = [
     value: '0.2',
     unit: 'bar/km',
     unitType: 'dpc',
-    unitFactor: 1
+    unitFactor: 1,
   },
   {
     service: 'Pump Discharge',
@@ -99,7 +101,7 @@ const lineSizingCriteria = [
     value: '4.5',
     unit: 'm/s',
     unitType: 'velocity',
-    unitFactor: 1
+    unitFactor: 1,
   },
   {
     service: 'Pump Discharge',
@@ -107,10 +109,10 @@ const lineSizingCriteria = [
     value: '1',
     unit: 'bar/km',
     unitType: 'dpc',
-    unitFactor: 1
+    unitFactor: 1,
   },
 ];
-const lineSizingScreen = props => {
+const LineSizingScreen = props => {
   const [stateLineSizingContext, setstateLineSizingContext] = useReducer(
     calcReducer,
     {
@@ -128,6 +130,12 @@ const lineSizingScreen = props => {
 
   const initValue = !selectedCalc ? calculations[0] : selectedCalc[0];
 
+  useEffect(() => {
+    props.navigation.setParams({
+      hasChosenAction: selectedCalc ? true : false,
+    });
+  }, [selectedCalc]);
+
   return (
     <CalcContext.Provider
       value={[stateLineSizingContext, setstateLineSizingContext]}>
@@ -138,12 +146,27 @@ const lineSizingScreen = props => {
   );
 };
 
-// const styles = StyleSheet.create({
-//   inner: {
-//     padding: 24,
-//     flex: 1,
-//     justifyContent: 'flex-end',
-//   },
-// });
+LineSizingScreen.navigationOptions = navData => {
+  const hasChosenAction = navData.navigation.getParam('hasChosenAction');
 
-export default lineSizingScreen;
+  return {
+    headerTitle: 'Line Sizing',
+    headerRight: () => {
+      if (hasChosenAction) {
+        return (
+          <HeaderButtons HeaderButtonComponent={HeaderButton}>
+            <Item
+              title="Save"
+              iconName={
+                Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'
+              }
+              // onPress={submitFn}
+            />
+          </HeaderButtons>
+        );
+      }
+    },
+  };
+};
+
+export default LineSizingScreen;

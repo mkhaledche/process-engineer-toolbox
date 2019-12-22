@@ -1,8 +1,8 @@
 import React from "react";
-const CalcContext = React.createContext({
+const CalcContext = React.createContext([{
   calculations: [{ label: "Choose calculation", value: "" }],
   calculationInputs: {}
-});
+}]);
 export default CalcContext;
 
 const calcReducer = (state, action) => {
@@ -12,7 +12,9 @@ const calcReducer = (state, action) => {
     switch (action.type) {
       case "SWITCH_TO_CALC":
           return {...state, selectedCalc}
-
+      case "SEND_INPUT":
+          console.log(action);
+          return {...state}
       default:``
         throw new Error();
     }

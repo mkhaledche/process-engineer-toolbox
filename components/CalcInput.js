@@ -12,14 +12,15 @@ import CalcContext from '../context/CalcContext';
 import inputUnits from '../constants/Units';
 
 const CalcInput = props => {
-  const calcs = useContext(CalcContext);
+  const [state, dispatch] = useContext(CalcContext);
   const {
     calculations,
     calculationInputs,
     selectedCalc,
     sizingCriteria,
-  } = calcs[0];
+  } = state;
 
+  console.log(useContext(CalcContext));
   const filteredCriteria = sizingCriteria.filter(
     criterion => criterion.service === selectedCalc[0].label
   );
@@ -38,8 +39,6 @@ const CalcInput = props => {
   const [criteria, setCriteria] = useState(filteredCriteria);
   const [units, setUnits] = useState(initUnits);
   const [criteriaUnits, setCriteriaUnits] = useState(initCriteriaUnits);
-
-  const handleChangePicker = () => {};
 
   return (
     <View style={styles.inputContainer}>
@@ -60,6 +59,7 @@ const CalcInput = props => {
                 }}
                 style={styles.input}
                 keyboardType="decimal-pad"
+                onBlur={() => dispatch({ type: "SEND_INPUT", value: [inputValue, criteria, units, criteriaUnits] })}
               />
               <Picker
                 mode="dialog"
