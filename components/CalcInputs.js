@@ -22,17 +22,12 @@ const CalcInputs = props => {
 
   return (
     <KeyboardAvoidingView
-      behavior='padding'
+      behavior="padding"
       keyboardVerticalOffset={50}
-      style={{ flexGrow: 1}}
+      style={{ flexGrow: 1 }}
       enabled={true}>
       <View style={styles.inputContainer}>
-        <Text>
-          {selectedCalc && selectedCalc[0].value !== ''
-            ? selectedCalc[0].label
-            : ''}
-        </Text>
-        <ScrollView style={{ flexGrow: 1}}>
+        <ScrollView style={{ flexGrow: 1 }}>
           {selectedCalc && selectedCalc[0].value !== '' && <CalcInput />}
         </ScrollView>
       </View>

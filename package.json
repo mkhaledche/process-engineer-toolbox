@@ -1,31 +1,25 @@
 {
-  "name": "process-engineer-toolbox",
+  "name": "github.com/mkhaledche/process-engineer-toolbox",
   "version": "0.0.0",
-  "description": "No description",
+  "description": "mkhaledche/process-engineer-toolbox @ Dec 22, 2019",
   "author": null,
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "devDependencies": {
-    "babel-preset-expo": "^7.0.0",
-    "expo": "^35.0.0",
-    "expo-constants": "^7.0.0",
-    "prettier": "^1.19.1",
-    "react-native-gesture-handler": "^1.5.2",
-    "react-native-screens": "^2.0.0-alpha.17",
-    "react-native-vector-icons": "^6.6.0"
+    "babel-preset-expo": "^7.0.0"
   },
   "dependencies": {
-    "@expo/vector-icons": "10.0.0",
-    "expo-asset": "7.0.0",
-    "expo-font": "7.0.0",
-    "prop-types": "15.7.2",
-    "react": "16.8.3",
-    "react-dom": "16.8.3",
-    "react-native": "0.59.8",
-    "react-native-paper": "^3.1.1",
-    "react-native-web": "0.11.7",
+    "expo": "^36.0.0",
+    "react": "16.9.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.1.tar.gz",
     "react-navigation": "4.0.10",
+    "react-native-paper": "^3.1.1",
+    "react-native-screens": "^1.0.0-alpha",
     "react-navigation-stack": "^1.10.3",
-    "react-native-gesture-handler": "~1.3.0"
+    "react-native-picker-select": "6.3.3",
+    "react-native-gesture-handler": "~1.3.0",
+    "react-navigation-header-buttons": "3.0.4",
+    "react-native-keyboard-aware-scrollview": "2.1.0",
+    "react-native-keyboard-aware-scroll-view": "0.9.1"
   }
 }

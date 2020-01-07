@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "process-engineer-toolbox",
-    "description": "No description",
-    "slug": "snack-40838f1c-917d-44f0-b291-98cfcdbd1ac4",
+    "name": "github.com/mkhaledche/process-engineer-toolbox",
+    "description": "mkhaledche/process-engineer-toolbox @ Dec 22, 2019",
+    "slug": "snack-863a4104-5bfe-47ec-847d-c785465e93ff",
     "privacy": "unlisted",
-    "sdkVersion": "35.0.0",
+    "sdkVersion": "36.0.0",
     "version": "1.0.0",
     "orientation": "portrait",
     "primaryColor": "#cccccc",

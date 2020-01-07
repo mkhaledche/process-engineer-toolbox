@@ -24,6 +24,7 @@ const lineSizingCalculations = [
       initValue: '0.2',
       unit: 'bar/km',
     },
+    calculateDensity: true,
   },
   {
     label: 'Pump Discharge',
@@ -36,30 +37,24 @@ const lineSizingCalculations = [
 const lineSizingCalculationInputs = [
   {
     name: 'Flow Rate',
-    value: '0',
+    value: null,
     unit: 'm3/hr',
     unitType: 'vFR',
     unitFactor: 1,
   },
   {
     name: 'Density',
-    value: '0',
+    value: null,
     unit: 'kg/m3',
     unitType: 'density',
     unitFactor: 1,
+    toBeCalculated: false,
   },
   {
     name: 'Viscosity',
-    value: '0',
+    value: null,
     unit: 'cP',
     unitType: 'viscosity',
-    unitFactor: 1,
-  },
-  {
-    name: 'Mass Flow Rate',
-    value: '0',
-    unit: 'kg/hr',
-    unitType: 'mFR',
     unitFactor: 1,
   },
   {
@@ -68,13 +63,15 @@ const lineSizingCalculationInputs = [
     unit: 'in',
     unitType: 'size',
     unitFactor: 1,
+    toBeCalculated: true,
   },
   {
     name: 'Pipe Distance',
-    value: '0',
+    value: null,
     unit: 'm',
     unitType: 'length',
     unitFactor: 1,
+    toBeCalculated: true,
   },
 ];
 
@@ -97,7 +94,7 @@ const lineSizingCriteria = [
   },
   {
     service: 'Pump Discharge',
-    criteria: 'Maximum Velocity Drop',
+    criteria: 'Maximum Velocity',
     value: '4.5',
     unit: 'm/s',
     unitType: 'velocity',
@@ -119,6 +116,7 @@ const LineSizingScreen = props => {
       calculations: lineSizingCalculations,
       calculationInputs: lineSizingCalculationInputs,
       sizingCriteria: lineSizingCriteria,
+      sideCalc: {},
     }
   );
 
