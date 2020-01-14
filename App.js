@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Text, View } from "react-native";
 import * as Font from "expo-font";
-import { AppLoading } from "expo";
+// import { AppLoading } from "expo";
 //import { enableScreens } from 'react-native-screens';
 
 import CalcNavigator from "./navigation/calcNavigator";
@@ -22,7 +22,7 @@ export default function App() {
   //   return (
   //     <AppLoading
   //       startAsync={fetchFonts}
-  //       onFinish={() => setFontLoaded(true)}
+  //       onFinish={() => setFontLoaded(true)}I
   //     />
   //   );
   // }

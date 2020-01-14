@@ -1,4 +1,10 @@
 import React from 'react';
+import {
+  pipeSizeVseqLength,
+  pipeSizeVsSchedule,
+  getNominalSize,
+} from '../data/pipeSizeData';
+
 const CalcContext = React.createContext([
   {
     calculations: [{ label: 'Choose calculation', value: '' }],
@@ -43,6 +49,7 @@ const calcReducer = (state, action) => {
 
     case 'SEND_SIDE_INPUT': {
       const [sideCalcInput, sideCalcInputUnits, calcType] = action.value;
+
       let sideCalculationInputs = [];
       for (let h = 0; h < sideCalcInput.length; h++) {
         sideCalculationInputs = [
@@ -50,6 +57,7 @@ const calcReducer = (state, action) => {
           { ...sideCalcInput[h], unit: sideCalcInputUnits[h].value },
         ];
       }
+
       return { ...state, [calcType]: sideCalculationInputs };
     }
 
@@ -87,6 +95,46 @@ const calcReducer = (state, action) => {
 
       hideModal();
 
+      return { ...state, calculationInputs };
+    }
+
+    case 'CALCULATE_ID': {
+      const [size, calcType, schedule, updateValue, hideModal] = action.value;
+      const { calculationInputs } = state;
+      const pipeID = pipeSizeVsSchedule[size][schedule];
+      calculationInputs[3].value =
+        pipeID !== null ? pipeID.toString() : 'Schedule N/A for this size';
+      updateValue(calculationInputs);
+      hideModal();
+      return { ...state, calculationInputs };
+    }
+
+    case 'CALCULATE_LENGTH': {
+      const [sideCalcInput, calcType, updateValue, hideModal] = action.value;
+      const { calculationInputs } = state;
+      const nominalSize = getNominalSize(calculationInputs[3].value);
+
+      let calculatedDistance =
+        parseFloat(sideCalcInput[0].value / sideCalcInput[0].unitFactor) *
+        pipeSizeVseqLength[nominalSize]['length-factor'];
+            console.log(calculatedDistance);
+      for (let j = 1; j < sideCalcInput.length; j++) {
+        
+        console.log(parseFloat(sideCalcInput[j].value) *
+            pipeSizeVseqLength[nominalSize][sideCalcInput[j].identifier] *
+            0.3048);
+
+        calculatedDistance =
+          calculatedDistance +
+          parseFloat(sideCalcInput[j].value) *
+            pipeSizeVseqLength[nominalSize][sideCalcInput[j].identifier] *
+            0.3048;
+      }
+
+      calculationInputs[4].value = parseFloat(calculatedDistance).toString();
+      updateValue(calculationInputs);
+
+      hideModal();
       return { ...state, calculationInputs };
     }
 

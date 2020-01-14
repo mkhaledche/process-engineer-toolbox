@@ -4,16 +4,13 @@ import {
   Text,
   Picker,
   TextInput,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
   Button,
   Modal,
-  Alert,
-  TouchableHighlight,
+  Platform,
 } from 'react-native';
 import CalcContext from '../context/CalcContext';
 import inputUnits from '../constants/Units';
+import { typicalStyles, pickerSelectStyles } from '../constants/styles';
 import CalculateModal from './UI/CalculateModal';
 import RNPickerSelect from 'react-native-picker-select';
 import sideCalculations from '../data/sideCalculations';
@@ -54,9 +51,8 @@ const CalcInput = props => {
   let checkedValue;
   let pickerPlaceholder;
 
-  console.log(inputValue);
   return (
-    <View style={styles.inputContainer}>
+    <View style={typicalStyles.inputContainer}>
       <Text>Flow Basis</Text>
       <RNPickerSelect
         selectedValue={basis}
@@ -93,7 +89,7 @@ const CalcInput = props => {
         return (
           <View>
             <Text>{param.name}</Text>
-            <View style={styles.inputGroup}>
+            <View style={typicalStyles.inputGroup}>
               <TextInput
                 placeholder={`Enter ${param.name} here`}
                 value={
@@ -108,7 +104,11 @@ const CalcInput = props => {
                   updatedValue[index].value = e;
                   setInputValue(updatedValue);
                 }}
-                style={styles.input}
+                style={
+                  Platform.OS === 'ios'
+                    ? pickerSelectStyles.inputIOS
+                    : pickerSelectStyles.inputAndroid
+                }
                 keyboardType="decimal-pad"
                 onBlur={() =>
                   dispatch({
@@ -120,7 +120,7 @@ const CalcInput = props => {
 
               {param.toBeCalculated && (
                 <CalculateModal
-                  style={styles.button}
+                  style={typicalStyles.button}
                   visibility={showModal[param.unitType]}
                   showingModal={() => {
                     setShowModal({ ...showModal, [param.unitType]: true });
@@ -130,7 +130,9 @@ const CalcInput = props => {
                   }
                   modalData={sideCalculations[param.unitType]}
                   calcType={param.unitType}
-                  updateValue={input => {setInputValue(input)}}
+                  updateValue={input => {
+                    setInputValue(input);
+                  }}
                 />
               )}
 
@@ -177,7 +179,7 @@ const CalcInput = props => {
                     ],
                   });
                 }}
-                style={styles.picker}
+                style={pickerSelectStyles}
                 placeholder={
                   Platform.OS === 'ios' && index === 0
                     ? { label: 'Change Unit', value: pickerPlaceholder }
@@ -194,7 +196,7 @@ const CalcInput = props => {
         return (
           <View style={{ flex: 1 }}>
             <Text>{criterion.criteria}</Text>
-            <View style={styles.inputGroup}>
+            <View style={typicalStyles.inputGroup}>
               <TextInput
                 value={criteria[index].value}
                 onChangeText={e => {
@@ -204,7 +206,7 @@ const CalcInput = props => {
                   updatedCriteria[index].value = e;
                   setCriteria(updatedCriteria);
                 }}
-                style={styles.input}
+                style={typicalStyles.input}
                 keyboardType="decimal-pad"
                 onBlur={() => {
                   dispatch({
@@ -255,7 +257,7 @@ const CalcInput = props => {
                     ],
                   });
                 }}
-                style={styles.picker}
+                style={typicalStyles.picker}
                 placeholder={{}}
                 items={inputUnits[criterion.unitType]}
               />
@@ -266,53 +268,5 @@ const CalcInput = props => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  inputGroup: {
-    flexDirection: Platform.OS === 'ios' ? 'row' : 'column',
-    flex: 1,
-  },
-  input: {
-    width: '80%',
-    height: 40,
-    marginVertical: 3,
-    marginLeft: '3%',
-    marginRight: '1%',
-    paddingHorizontal: '3%',
-    paddingVertical: 10,
-    borderColor: '#ccc',
-    borderWidth: 2,
-    fontSize: 14,
-    flex: 0.5,
-  },
-  button: {
-    width: '20%',
-    height: 40,
-    marginVertical: 3,
-    marginLeft: '3%',
-    marginRight: '1%',
-    paddingHorizontal: '3%',
-    paddingVertical: 10,
-    borderColor: '#ccc',
-    borderWidth: 2,
-    fontSize: 14,
-    flex: 0.5,
-  },
-  picker: {
-    width: '20%',
-    height: 40,
-    marginVertical: 1,
-    marginLeft: '1%',
-    marginRight: '1%',
-    paddingVertical: 10,
-    fontSize: 18,
-    flex: 0.3,
-  },
-  inputContainer: {
-    padding: 10,
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-});
 
 export default CalcInput;
