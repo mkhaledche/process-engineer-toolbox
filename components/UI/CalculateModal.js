@@ -52,19 +52,7 @@ const CalculateModal = props => {
         animationType="slide"
         transparent={false}
         visible={props.visibility}>
-        <View style={styles.inputModalContainer}>
-          <View
-            style={{
-              width: '100%',
-              height:
-                calcType === 'length'
-                  ? Dimensions.get('window').height
-                  : Dimensions.get('window').height * 0.5,
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              alignItems: 'flex-start',
-              flex: 1,
-            }}>
+        <View style={{ flex: 0.1, flexDirection: 'row', flexWrap: 'wrap' }}>
             {calcType === 'size' && (
               <View style={{ flex: 1, marginVertical: 10 }}>
                 <Text>Nominal Diameter</Text>
@@ -94,18 +82,23 @@ const CalculateModal = props => {
               modalData.map((param, index) => {
                 return (
                   <View
-                    style={{
-                      flex: 1,
-                      flexDirection: 'row',
-                      justifyContent: 'flex-end',
-                      alignItems: 'flex-start',
-                      paddingTop: Dimensions.get('window').height * 0.1,
-                    }}>
-                    <View
-                      style={{
-                        ...typicalStyles.inputGroup,
-                        width: '40%',
-                      }}>
+            style={(param.unitType !== 'length' && calcType === 'length') ? {
+              flexBasis: '40%',
+              height: 50,
+              marginHorizontal: '2%',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              flexGrow: 1
+            } : {}}>
+            <View
+              style={param.unitType !== 'length' && calcType === 'length' ? {
+                flexBasis: '40%',
+                height: 50,
+                marginHorizontal: '2%',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                flexGrow: 1
+              } : {}}>
                       <Text style={typicalStyles.text}>{param.name}</Text>
                       <TextInput
                         value={sideCalcInput[index].value}
@@ -148,11 +141,13 @@ const CalculateModal = props => {
                     {inputUnits[param.unitType] && (
                       <View
                         style={{
-                          ...typicalStyles.inputGroup,
-                          width: '45%',
-                          flexWrap: 'wrap',
+                          flexBasis: '25%',
+                          height: 50,
+                          marginHorizontal: '2%',
                           flexDirection: 'row',
-                        }}>
+                          flexWrap: 'wrap',
+                          flexGrow: 1
+                                }}>
                         <RNPickerSelect
                           mode="dialog"
                           selectedValue={sideCalcInputUnits[index]}
@@ -260,19 +255,19 @@ const CalculateModal = props => {
               }}
             />
           </View>
-        </View>
       </Modal>
     </>
   );
 };
-const styles = StyleSheet.create({
-  inputModalContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-});
+// const styles = StyleSheet.create({
+//   inputModalContainer: {
+//     width: '45%',
+//     flex: 1,
+//     flexDirection: 'row',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     marginVertical: 10,
+//   },
+// });
 
 export default CalculateModal;
