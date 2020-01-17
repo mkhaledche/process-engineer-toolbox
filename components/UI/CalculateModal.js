@@ -5,15 +5,20 @@ import {
   View,
   Text,
   TextInput,
-  StyleSheet,
   Platform,
   Dimensions,
 } from 'react-native';
 import CalcContext from '../../context/CalcContext';
 import inputUnits from '../../constants/Units';
-import { typicalStyles, pickerSelectStyles } from '../../constants/styles';
+import {
+  typicalStyles,
+  pickerSelectStyles,
+  boxContainerStyle,
+  boxItemsStyle,
+} from '../../constants/styles';
 import RNPickerSelect from 'react-native-picker-select';
 import { pipeSizes, pipeSchedules } from '../../data/pipeSizeData';
+import { Ionicons } from '@expo/vector-icons';
 
 const CalculateModal = props => {
   const { showingModal, hideModal, modalData, calcType, updateValue } = props;
@@ -32,8 +37,12 @@ const CalculateModal = props => {
   const [size, setSize] = useState('1in');
   const [schedule, setSchedule] = useState('40-STD');
 
+  const iosPickerIcon = () => {
+    return <Ionicons name="md-arrow-down" size={16} color="gray" />;
+  };
+
   return (
-    <>
+    <View>
       <Button
         title="Calculate"
         style={{ ...props.style }}
@@ -48,11 +57,20 @@ const CalculateModal = props => {
           });
         }}
       />
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={props.visibility}>
-        <View style={{ flex: 0.1, flexDirection: 'row', flexWrap: 'wrap' }}>
+      <View style={typicalStyles.inputModalContainer}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={props.visibility}>
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              backgroundColor: '#d3d3d3', 
+              marginVertical: Dimensions.get('window').height * 0.2,
+              height: Dimensions.get('window').height * 0.8,
+              justifyContent: 'space-between',
+            }}>
             {calcType === 'size' && (
               <View style={{ flex: 1, marginVertical: 10 }}>
                 <Text>Nominal Diameter</Text>
@@ -62,6 +80,7 @@ const CalculateModal = props => {
                   onValueChange={itemValue => {
                     setSize(itemValue);
                   }}
+                  Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
                   placeholder={{}}
                   items={pipeSizes}
                 />
@@ -71,6 +90,7 @@ const CalculateModal = props => {
                   onValueChange={itemValue => {
                     setSchedule(itemValue);
                   }}
+                  Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
                   placeholder={{}}
                   items={pipeSchedules}
                   style={pickerSelectStyles}
@@ -82,23 +102,21 @@ const CalculateModal = props => {
               modalData.map((param, index) => {
                 return (
                   <View
-            style={(param.unitType !== 'length' && calcType === 'length') ? {
-              flexBasis: '40%',
-              height: 50,
-              marginHorizontal: '2%',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              flexGrow: 1
-            } : {}}>
-            <View
-              style={param.unitType !== 'length' && calcType === 'length' ? {
-                flexBasis: '40%',
-                height: 50,
-                marginHorizontal: '2%',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                flexGrow: 1
-              } : {}}>
+                    style={
+                      param.unitType !== 'length' && calcType === 'length'
+                        ? boxContainerStyle.lengthInputStyle
+                        : param.unitType === 'length'
+                        ? boxContainerStyle.otherEqLengthInputsStyle
+                        : boxContainerStyle.generalInputsStyle
+                    }>
+                    <View
+                      style={
+                        param.unitType !== 'length' && calcType === 'length'
+                          ? boxItemsStyle.lengthInputStyle
+                          : param.unitType !== 'length'
+                          ? boxItemsStyle.otherEqLengthInputsStyle
+                          : boxItemsStyle.generalInputsStyle
+                      }>
                       <Text style={typicalStyles.text}>{param.name}</Text>
                       <TextInput
                         value={sideCalcInput[index].value}
@@ -139,19 +157,12 @@ const CalculateModal = props => {
                       />
                     </View>
                     {inputUnits[param.unitType] && (
-                      <View
-                        style={{
-                          flexBasis: '25%',
-                          height: 50,
-                          marginHorizontal: '2%',
-                          flexDirection: 'row',
-                          flexWrap: 'wrap',
-                          flexGrow: 1
-                                }}>
+                      <View style={boxItemsStyle.pickerContainer}>
                         <RNPickerSelect
                           mode="dialog"
                           selectedValue={sideCalcInputUnits[index]}
-                          style={pickerSelectStyles}
+                          style={typicalStyles.picker}
+                          Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
                           onValueChange={itemValue => {
                             let updatedUnits = sideCalcInputUnits.map(a => {
                               return a;
@@ -255,19 +266,10 @@ const CalculateModal = props => {
               }}
             />
           </View>
-      </Modal>
-    </>
+        </Modal>
+      </View>
+    </View>
   );
 };
-// const styles = StyleSheet.create({
-//   inputModalContainer: {
-//     width: '45%',
-//     flex: 1,
-//     flexDirection: 'row',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     marginVertical: 10,
-//   },
-// });
 
 export default CalculateModal;

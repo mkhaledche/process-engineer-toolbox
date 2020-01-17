@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Picker, View } from 'react-native';
+import { Picker, View, Platform } from 'react-native';
 import CalcContext from '../context/CalcContext';
 import RNPickerSelect from 'react-native-picker-select';
+import { Ionicons } from '@expo/vector-icons';
 
 const CalcPicker = props => {
   const { availableCalcs } = props;
   const dispatch = useContext(CalcContext)[1];
   const display = props.initialValue.value === null ? 'flex' : 'none';
 
-  // {availableCalcs.map((item, index) => {
-  //   return (
-  //     <Picker.Item key={index} label={item.label} value={item.value} />
-  //   );
-  // })}
+  const iosPickerIcon = () => {
+    return <Ionicons name="md-arrow-down" size={16} color="gray" />;
+  };
 
   return (
     <View
@@ -28,9 +27,10 @@ const CalcPicker = props => {
         placeholder={{}}
         items={availableCalcs}
         style={{
-        fontSize: 25,
-        justifyContent: 'center',
-      }}
+          fontSize: 25,
+          justifyContent: 'center',
+        }}
+        Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
       />
     </View>
   );
