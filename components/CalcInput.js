@@ -60,7 +60,7 @@ const CalcInput = props => {
   let pickerPlaceholder;
 
   return (
-    <View style={typicalStyles.inputContainer}>
+    <View style={typicalStyles.inputsParent}>
       <Text>Flow Basis</Text>
       <RNPickerSelect
         selectedValue={basis}
@@ -99,10 +99,9 @@ const CalcInput = props => {
         return (
           <View style={typicalStyles.inputGroup}>
             <Text>{param.name}</Text>
-            <View style={boxContainerStyle.generalInputsStyle}>
-              <View style={typicalStyles.inputContainer}>
+            <View style={typicalStyles.inputContainer}>
+              <View style={typicalStyles.input}>
                 <TextInput
-                  placeholder={`Enter ${param.name} here`}
                   value={
                     state.sideCalc[param.unitType]
                       ? state.sideCalc[param.unitType]
@@ -146,7 +145,7 @@ const CalcInput = props => {
                   }}
                 />
               )}
-              <View style={boxItemsStyle.pickerContainer}>
+              <View style={typicalStyles.picker}>
                 <RNPickerSelect
                   mode="dialog"
                   selectedValue={units[index]}
@@ -190,7 +189,6 @@ const CalcInput = props => {
                       ],
                     });
                   }}
-                  style={typicalStyles.picker}
                   placeholder={
                     Platform.OS === 'ios' && index === 0
                       ? { label: 'Change Unit', value: pickerPlaceholder }
@@ -208,72 +206,81 @@ const CalcInput = props => {
         return (
           <View style={{ flex: 1 }}>
             <Text>{criterion.criteria}</Text>
-            <View style={typicalStyles.inputGroup}>
-              <TextInput
-                value={criteria[index].value}
-                onChangeText={e => {
-                  let updatedCriteria = criteria.map(a => {
-                    return { ...a };
-                  });
-                  updatedCriteria[index].value = e;
-                  setCriteria(updatedCriteria);
-                }}
-                style={typicalStyles.input}
-                keyboardType="decimal-pad"
-                onBlur={() => {
-                  dispatch({
-                    type: 'SEND_INPUT',
-                    value: [inputValue, criteria, units, criteriaUnits],
-                  });
-                }}
-              />
-              <RNPickerSelect
-                mode="dialog"
-                selectedValue={criteriaUnits[index]}
-                Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
-                onValueChange={itemValue => {
-                  let updatedCriteriaUnits = criteriaUnits.map(a => {
-                    return a;
-                  });
-                  updatedCriteriaUnits[index] = itemValue;
-                  setCriteriaUnits(updatedCriteriaUnits);
+            <View style={typicalStyles.inputContainer}>
+              <View style={typicalStyles.input}>
+                <TextInput
+                  value={criteria[index].value}
+                  onChangeText={e => {
+                    let updatedCriteria = criteria.map(a => {
+                      return { ...a };
+                    });
+                    updatedCriteria[index].value = e;
+                    setCriteria(updatedCriteria);
+                  }}
+                  keyboardType="decimal-pad"
+                  onBlur={() => {
+                    dispatch({
+                      type: 'SEND_INPUT',
+                      value: [inputValue, criteria, units, criteriaUnits],
+                    });
+                  }}
+                  style={
+                    Platform.OS === 'ios'
+                      ? pickerSelectStyles.inputIOS
+                      : pickerSelectStyles.inputAndroid
+                  }
+                />
+              </View>
+              <View style={typicalStyles.picker}>
+                <RNPickerSelect
+                  mode="dialog"
+                  selectedValue={criteriaUnits[index]}
+                  Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
+                  onValueChange={itemValue => {
+                    let updatedCriteriaUnits = criteriaUnits.map(a => {
+                      return a;
+                    });
+                    updatedCriteriaUnits[index] = itemValue;
+                    setCriteriaUnits(updatedCriteriaUnits);
 
-                  const conversionFactorObject = inputUnits[
-                    criterion.unitType
-                  ].find(a => {
-                    return a.value === itemValue;
-                  });
+                    const conversionFactorObject = inputUnits[
+                      criterion.unitType
+                    ].find(a => {
+                      return a.value === itemValue;
+                    });
 
-                  let conversionFactor = conversionFactorObject.factor;
+                    let conversionFactor = conversionFactorObject.factor;
 
-                  let convertedCriterionValue = criteria.map(a => {
-                    return { ...a };
-                  });
+                    let convertedCriterionValue = criteria.map(a => {
+                      return { ...a };
+                    });
 
-                  convertedCriterionValue[index].value =
-                    (parseFloat(convertedCriterionValue[index].value) *
-                      conversionFactor) /
-                    convertedCriterionValue[index].unitFactor;
-                  convertedCriterionValue[
-                    index
-                  ].value = convertedCriterionValue[index].value.toString();
-                  convertedCriterionValue[index].unitFactor = conversionFactor;
+                    convertedCriterionValue[index].value =
+                      (parseFloat(convertedCriterionValue[index].value) *
+                        conversionFactor) /
+                      convertedCriterionValue[index].unitFactor;
+                    convertedCriterionValue[
+                      index
+                    ].value = convertedCriterionValue[index].value.toString();
+                    convertedCriterionValue[
+                      index
+                    ].unitFactor = conversionFactor;
 
-                  setCriteria(convertedCriterionValue);
-                  dispatch({
-                    type: 'SEND_INPUT',
-                    value: [
-                      inputValue,
-                      convertedCriterionValue,
-                      units,
-                      updatedCriteriaUnits,
-                    ],
-                  });
-                }}
-                style={typicalStyles.picker}
-                placeholder={{}}
-                items={inputUnits[criterion.unitType]}
-              />
+                    setCriteria(convertedCriterionValue);
+                    dispatch({
+                      type: 'SEND_INPUT',
+                      value: [
+                        inputValue,
+                        convertedCriterionValue,
+                        units,
+                        updatedCriteriaUnits,
+                      ],
+                    });
+                  }}
+                  placeholder={{}}
+                  items={inputUnits[criterion.unitType]}
+                />
+              </View>
             </View>
           </View>
         );

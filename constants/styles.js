@@ -3,31 +3,52 @@ import { StyleSheet, Platform, Dimensions, Ionicons } from 'react-native';
 let heightFactor = Platform.OS === 'ios' ? 0.08 : 0.05;
 
 const typicalStyles = StyleSheet.create({
+  inputsParent: {
+    padding: 10,
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  button: {
+    height: Dimensions.get('window').height * 0.06,
+    width: '20%',
+    paddingVertical: Dimensions.get('window').height * 0.004,
+    // marginVertical: Dimensions.get('window').height * 0.004,
+  },
   inputGroup: {
     // flexDirection: Platform.OS === 'ios' ? 'row' : 'column',
     // flex: 1,
     marginVertical: Dimensions.get('window').height * 0.004,
   },
-  input: {
-    width: '40%',
-    height: Dimensions.get('window').height * 0.04,
-    marginLeft: '3%',
-    marginRight: '1%',
-    // marginBottom: Dimensions.get('window').height * 0.01,
-    paddingHorizontal: '3%',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    fontSize: 14,
+  inputContainer: {
+    width: '100%',
+    marginHorizontal: 'auto',
+    flexDirection: 'row',
+    marginVertical: Dimensions.get('window').height * 0.01,
+    paddingVertical: Dimensions.get('window').height * 0.01,
+    alignItems: 'space-between',
   },
   inputModalContainer: { flexDirection: 'row', flexWrap: 'wrap' },
-  inputContainer: {
-    padding: 10,
-    flex: 1,
-    justifyContent: 'flex-end',
+  input: {
+    width: '34%',
+    height: Dimensions.get('window').height * 0.07,
+    paddingVertical: Dimensions.get('window').height * 0.004,
+    marginVertical: Dimensions.get('window').height * 0.004,
+    marginRight: 0,
   },
   text: {
     marginVertical: Dimensions.get('window').height * 0.001,
     height: Dimensions.get('window').height * 0.03,
+  },
+  picker: {
+    width: '33%',
+    height: Dimensions.get('window').height * 0.06,
+    marginVertical: Dimensions.get('window').height * 0.004,
+    marginLeft: 'auto',
+    paddingVertical: Dimensions.get('window').height * 0.004,
+    fontSize: 15,
+    borderColor: '#ccc',
+    borderWidth: Dimensions.get('window').height * 0.001,
+    alignItems: 'flex-end',
   },
 });
 
