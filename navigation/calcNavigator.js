@@ -4,6 +4,7 @@ import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import CalcMainScreen from "../screens/calcMainScreen";
 import LineSizingScreen from "../screens/lineSizingScreen";
+import CalcResult from "../screens/CalcResult";
 import Colors from "../constants/Colors";
 
 const defaultStackNavOptions = {
@@ -27,6 +28,9 @@ const calcNavigator = createStackNavigator(
     },
     LineSizing: {
       screen: LineSizingScreen
+    },
+    Results: {
+      screen: CalcResult
     }
     //   MealDetail: MealDetailScreen
     // },

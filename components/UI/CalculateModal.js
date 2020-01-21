@@ -17,7 +17,11 @@ import {
   boxItemsStyle,
 } from '../../constants/styles';
 import RNPickerSelect from 'react-native-picker-select';
-import { pipeSizes, pipeSchedules } from '../../data/pipeSizeData';
+import {
+  pipeSizes,
+  pipeSchedules,
+  getNominalSize,
+} from '../../data/pipeSizeData';
 import { Ionicons } from '@expo/vector-icons';
 
 const CalculateModal = props => {
@@ -41,6 +45,7 @@ const CalculateModal = props => {
     return <Ionicons name="md-arrow-down" size={16} color="gray" />;
   };
 
+  const inputNominalSize = getNominalSize(state.calculationInputs[3].value).indexOf("Cannot") > -1 ? "36in": getNominalSize(state.calculationInputs[3].value);
   return (
     <View>
       <Button
@@ -66,38 +71,57 @@ const CalculateModal = props => {
             style={{
               flexDirection: 'row',
               flexWrap: 'wrap',
-              backgroundColor: '#d3d3d3', 
-              marginVertical: Dimensions.get('window').height * 0.2,
-              height: Dimensions.get('window').height * 0.8,
+              backgroundColor: '#d3d3d3',
+              height:
+                calcType === 'length'
+                  ? Dimensions.get('window').height
+                  : calcType === 'size'
+                  ? Dimensions.get('window').height * 0.45
+                  : Dimensions.get('window').height * 0.85,
               justifyContent: 'space-between',
             }}>
             {calcType === 'size' && (
               <View style={{ flex: 1, marginVertical: 10 }}>
-                <Text>Nominal Diameter</Text>
-                <RNPickerSelect
-                  selectedValue={size}
-                  style={pickerSelectStyles}
-                  onValueChange={itemValue => {
-                    setSize(itemValue);
-                  }}
-                  Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
-                  placeholder={{}}
-                  items={pipeSizes}
-                />
-                <Text>Schedule</Text>
-                <RNPickerSelect
-                  selectedValue={schedule}
-                  onValueChange={itemValue => {
-                    setSchedule(itemValue);
-                  }}
-                  Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
-                  placeholder={{}}
-                  items={pipeSchedules}
-                  style={pickerSelectStyles}
-                />
+                <View style={typicalStyles.pickerContainer}>
+                  <Text>Nominal Diameter</Text>
+                  <RNPickerSelect
+                    selectedValue={size}
+                    style={typicalStyles.picker}
+                    onValueChange={itemValue => {
+                      setSize(itemValue);
+                    }}
+                    Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
+                    placeholder={{}}
+                    items={pipeSizes}
+                  />
+                </View>
+                <View style={{ ...typicalStyles.pickerContainer }}>
+                  <Text>Schedule</Text>
+                  <RNPickerSelect
+                    selectedValue={schedule}
+                    onValueChange={itemValue => {
+                      setSchedule(itemValue);
+                    }}
+                    Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
+                    placeholder={{}}
+                    items={pipeSchedules}
+                    style={{ ...typicalStyles.picker, width: '95%' }}
+                  />
+                </View>
               </View>
             )}
-
+            <View
+              style={{
+                marginTop: Dimensions.get('window').height * 0.065,
+              }}>
+              <Text>
+                {calcType === 'length'
+                  ? `Pipe Length shall be calculated based on a pipe size of ${inputNominalSize}`
+                  : calcType === 'density'
+                  ? 'Calculation is based on ideal gas law. For steam or non ideal gas, please enter the density manually'
+                  : null}
+              </Text>
+            </View>
             {calcType !== 'size' &&
               modalData.map((param, index) => {
                 return (
@@ -122,11 +146,13 @@ const CalculateModal = props => {
                         value={sideCalcInput[index].value}
                         placeholder=""
                         onChangeText={e => {
-                          let updatedInput = sideCalcInput.map(a => {
-                            return { ...a };
-                          });
-                          updatedInput[index].value = e;
-                          setSideCalcInput(updatedInput);
+                          if (isNaN(parseFloat(e)) || e !== '') {
+                            let updatedInput = sideCalcInput.map(a => {
+                              return { ...a };
+                            });
+                            updatedInput[index].value = e;
+                            setSideCalcInput(updatedInput);
+                          }
                         }}
                         style={
                           Platform.OS === 'ios'
@@ -244,27 +270,45 @@ const CalculateModal = props => {
                 );
               })}
 
-            <Button title="Cancel" onPress={hideModal} />
-            <Button
-              title="Calculate"
-              onPress={() => {
-                if (calcType === 'size' && props.visibility === true) {
-                  dispatch({
-                    type: 'CALCULATE_ID',
-                    value: [size, calcType, schedule, updateValue, hideModal],
-                  });
-                } else if (
-                  calcType &&
-                  typeof calcType === 'string' &&
-                  props.visibility === true
-                ) {
-                  dispatch({
-                    type: `CALCULATE_${calcType.toUpperCase()}`,
-                    value: [sideCalcInput, calcType, updateValue, hideModal],
-                  });
-                }
-              }}
-            />
+            <View style={typicalStyles.buttonContainer}>
+              <View style={typicalStyles.buttonItem}>
+                <Button title="Cancel" onPress={hideModal} color="red" />
+              </View>
+              <View style={typicalStyles.buttonItem}>
+                <Button
+                  title="Calculate"
+                  color="blue"
+                  onPress={() => {
+                    if (calcType === 'size' && props.visibility === true) {
+                      dispatch({
+                        type: 'CALCULATE_ID',
+                        value: [
+                          size,
+                          calcType,
+                          schedule,
+                          updateValue,
+                          hideModal,
+                        ],
+                      });
+                    } else if (
+                      calcType &&
+                      typeof calcType === 'string' &&
+                      props.visibility === true
+                    ) {
+                      dispatch({
+                        type: `CALCULATE_${calcType.toUpperCase()}`,
+                        value: [
+                          sideCalcInput,
+                          calcType,
+                          updateValue,
+                          hideModal,
+                        ],
+                      });
+                    }
+                  }}
+                />
+              </View>
+            </View>
           </View>
         </Modal>
       </View>

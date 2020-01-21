@@ -108,12 +108,13 @@ const CalcInput = props => {
                       : inputValue[index].value
                   }
                   onChangeText={e => {
+                    if (isNaN(parseFloat(e)) || e !== "") {
                     let updatedValue = inputValue.map(a => {
                       return { ...a };
                     });
                     updatedValue[index].value = e;
                     setInputValue(updatedValue);
-                  }}
+                  }}}
                   style={
                     Platform.OS === 'ios'
                       ? pickerSelectStyles.inputIOS
@@ -211,12 +212,13 @@ const CalcInput = props => {
                 <TextInput
                   value={criteria[index].value}
                   onChangeText={e => {
+                    if (isNaN(parseFloat(e)) || e !== "") {
                     let updatedCriteria = criteria.map(a => {
                       return { ...a };
                     });
                     updatedCriteria[index].value = e;
                     setCriteria(updatedCriteria);
-                  }}
+                  }}}
                   keyboardType="decimal-pad"
                   onBlur={() => {
                     dispatch({

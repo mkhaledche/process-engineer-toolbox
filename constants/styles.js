@@ -27,7 +27,7 @@ const typicalStyles = StyleSheet.create({
     paddingVertical: Dimensions.get('window').height * 0.01,
     alignItems: 'space-between',
   },
-  inputModalContainer: { flexDirection: 'row', flexWrap: 'wrap' },
+  inputModalContainer: { flexDirection: 'column', flexGrow: 0 },
   input: {
     width: '34%',
     height: Dimensions.get('window').height * 0.07,
@@ -50,6 +50,13 @@ const typicalStyles = StyleSheet.create({
     borderWidth: Dimensions.get('window').height * 0.001,
     alignItems: 'flex-end',
   },
+  buttonContainer: {
+    marginTop: Dimensions.get('window').height * 0.02,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  buttonItem: {},
 });
 
 const pickerSelectStyles = StyleSheet.create({
@@ -118,18 +125,18 @@ const boxItemsStyle = StyleSheet.create({
     width: '45%',
     height: Dimensions.get('window').height * heightFactor,
     marginHorizontal: '2%',
-    marginVertical: Dimensions.get('window').height * 0.002,
+    marginBottom: Dimensions.get('window').height * 0.001,
     flexDirection: 'column',
     flexGrow: 1,
-    paddingVertical: Dimensions.get('window').height * 0.002,
+    paddingBottom: Dimensions.get('window').height * 0.001,
   },
   otherEqLengthInputsStyle: {
     width: '45%',
     height: Dimensions.get('window').height * heightFactor,
     marginHorizontal: '2%',
-    marginVertical: Dimensions.get('window').height * 0.002,
+    marginVertical: Dimensions.get('window').height * 0.0017,
     flexDirection: 'column',
-    paddingVertical: Dimensions.get('window').height * 0.002,
+    paddingVertical: Dimensions.get('window').height * 0.0017,
   },
   generalInputsStyle: {
     width: '45%',
