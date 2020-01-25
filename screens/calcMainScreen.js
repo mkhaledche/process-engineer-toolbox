@@ -15,7 +15,7 @@ const CalcMainScreen = props => {
             content={item.content}
             image={item.image}
             onPress={() => {
-              console.log(props.navigation);
+
               props.navigation.navigate(item.screen);}}
           />
         );
