@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  Keyboard,
 } from 'react-native';
 import CalcPicker from '../components/CalcPicker';
 import CalcInputs from '../components/CalcInputs';
@@ -115,6 +116,7 @@ const lineSizingCriteria = [
     unitFactor: 1,
   },
 ];
+
 const LineSizingScreen = props => {
   const [stateLineSizingContext, setstateLineSizingContext] = useReducer(
     calcReducer,
@@ -166,7 +168,10 @@ LineSizingScreen.navigationOptions = navData => {
                 Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'
               }
               onPress={() => {
-                navData.navigation.navigate('Results', { inputData });
+                Keyboard.dismiss();
+                setTimeout(() => {
+                  navData.navigation.navigate('Results', { inputData });
+                }, 500);
               }}
             />
           </HeaderButtons>
