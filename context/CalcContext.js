@@ -117,9 +117,13 @@ const calcReducer = (state, action) => {
       let calculatedDistance =
         parseFloat(sideCalcInput[0].value / sideCalcInput[0].unitFactor) *
         pipeSizeVseqLength[nominalSize]['length-factor'];
-
+            console.log(calculatedDistance);
       for (let j = 1; j < sideCalcInput.length; j++) {
         
+        console.log(parseFloat(sideCalcInput[j].value) *
+            pipeSizeVseqLength[nominalSize][sideCalcInput[j].identifier] *
+            0.3048);
+
         calculatedDistance =
           calculatedDistance +
           parseFloat(sideCalcInput[j].value) *

@@ -6,7 +6,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Keyboard,
 } from 'react-native';
 import CalcInput from '../components/CalcInput';
 import CalcContext from '../context/CalcContext';
@@ -28,11 +27,7 @@ const CalcInputs = props => {
       style={{ flexGrow: 1 }}
       enabled={true}>
       <View style={styles.inputContainer}>
-        <ScrollView
-          style={{ flexGrow: 1 }}
-          onScroll={() => {
-            Keyboard.dismiss;
-          }}>
+        <ScrollView style={{ flexGrow: 1 }}>
           {selectedCalc && selectedCalc[0].value !== '' && <CalcInput />}
         </ScrollView>
       </View>

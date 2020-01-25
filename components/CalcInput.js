@@ -108,33 +108,25 @@ const CalcInput = props => {
                       : inputValue[index].value
                   }
                   onChangeText={e => {
-                    let t = 0;
-                    if (isNaN(parseFloat(e)) || e !== '') {
-                      let updatedValue = inputValue.map(a => {
-                        return { ...a };
-                      });
-                      updatedValue[index].value = e;
-                      setInputValue(updatedValue);
-                      setInterval(() => {
-                        t = t + 100;
-                        if (t === 500) {
-                          console.log(t);
-                        }
-                      }, 100);
-                    }
-                  }}
+                    if (isNaN(parseFloat(e)) || e !== "") {
+                    let updatedValue = inputValue.map(a => {
+                      return { ...a };
+                    });
+                    updatedValue[index].value = e;
+                    setInputValue(updatedValue);
+                  }}}
                   style={
                     Platform.OS === 'ios'
                       ? pickerSelectStyles.inputIOS
                       : pickerSelectStyles.inputAndroid
                   }
                   keyboardType="decimal-pad"
-                  onBlur={() => {
+                  onBlur={() =>
                     dispatch({
                       type: 'SEND_INPUT',
                       value: [inputValue, criteria, units, criteriaUnits],
-                    });
-                  }}
+                    })
+                  }
                 />
               </View>
               {param.toBeCalculated && (
@@ -220,14 +212,13 @@ const CalcInput = props => {
                 <TextInput
                   value={criteria[index].value}
                   onChangeText={e => {
-                    if (isNaN(parseFloat(e)) || e !== '') {
-                      let updatedCriteria = criteria.map(a => {
-                        return { ...a };
-                      });
-                      updatedCriteria[index].value = e;
-                      setCriteria(updatedCriteria);
-                    }
-                  }}
+                    if (isNaN(parseFloat(e)) || e !== "") {
+                    let updatedCriteria = criteria.map(a => {
+                      return { ...a };
+                    });
+                    updatedCriteria[index].value = e;
+                    setCriteria(updatedCriteria);
+                  }}}
                   keyboardType="decimal-pad"
                   onBlur={() => {
                     dispatch({
