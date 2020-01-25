@@ -44,7 +44,6 @@ const calcReducer = (state, action) => {
           { ...criteria[j], unit: criteriaUnits[j] },
         ];
       }
-      console.log({ ...state, calculationInputs, sizingCriteria });
       return { ...state, calculationInputs, sizingCriteria };
     }
 

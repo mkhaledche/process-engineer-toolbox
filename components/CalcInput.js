@@ -117,14 +117,10 @@ const CalcInput = props => {
                       setInputValue(updatedValue);
                       setInterval(() => {
                         t = t + 100;
+                        if (t === 500) {
+                          console.log(t);
+                        }
                       }, 100);
-                      if (t === 1000) {
-                        console.log(t);
-                        dispatch({
-                          type: 'SEND_INPUT',
-                          value: [updatedValue, criteria, units, criteriaUnits],
-                        });
-                      }
                     }
                   }}
                   style={
@@ -134,10 +130,10 @@ const CalcInput = props => {
                   }
                   keyboardType="decimal-pad"
                   onBlur={() => {
-                    // dispatch({
-                    //   type: 'SEND_INPUT',
-                    //   value: [inputValue, criteria, units, criteriaUnits],
-                    // });
+                    dispatch({
+                      type: 'SEND_INPUT',
+                      value: [inputValue, criteria, units, criteriaUnits],
+                    });
                   }}
                 />
               </View>
