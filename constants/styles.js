@@ -1,4 +1,5 @@
-import { StyleSheet, Platform, Dimensions, Ionicons } from 'react-native';
+import { StyleSheet, Platform, Dimensions, Ionicons, View } from 'react-native';
+import React from 'react';
 
 let heightFactor = Platform.OS === 'ios' ? 0.08 : 0.05;
 
@@ -51,12 +52,16 @@ const typicalStyles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   buttonContainer: {
-    marginTop: Dimensions.get('window').height * 0.02,
+    marginTop: Dimensions.get('window').height * 0.025,
+    marginBottom: Dimensions.get('window').height * 0.01,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center',
+    alignItems: 'space-around',
   },
-  buttonItem: {},
+  buttonItem: {
+    width: '38%',
+    marginHorizontal: '5%',
+  },
 });
 
 const pickerSelectStyles = StyleSheet.create({
@@ -72,7 +77,6 @@ const pickerSelectStyles = StyleSheet.create({
     color: 'black',
     marginVertical: Dimensions.get('window').height * 0.002,
     flex: 1,
-    // paddingRight: 30, // to ensure the text is never behind the icon
   },
   inputAndroid: {
     height: Dimensions.get('window').height * 0.05,
@@ -113,10 +117,18 @@ const boxContainerStyle = StyleSheet.create({
     height: Dimensions.get('window').height * heightFactor,
     marginHorizontal: '2%',
     flexDirection: 'row',
-    marginVertical: Dimensions.get('window').height * 0.05,
-    paddingVertical: Dimensions.get('window').height * 0.05,
+    marginVertical: Dimensions.get('window').height * 0.02,
     flexWrap: 'wrap',
     flexGrow: 1,
+  },
+  sizeInputsStyle: {
+    width: '90%',
+    height: Dimensions.get('window').height * heightFactor,
+    marginHorizontal: '2%',
+    flexDirection: 'column',
+    marginVertical: Dimensions.get('window').height * 0.05,
+    paddingVertical: Dimensions.get('window').height * 0.05,
+    flex: 1,
   },
 });
 

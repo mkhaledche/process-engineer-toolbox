@@ -3,7 +3,7 @@ export default {
     {
       name: 'Pressure',
       value: null,
-      unit: 'bar',
+      unit: 'atmg',
       unitType: 'pressure',
       unitFactor: 1,
     },
@@ -116,6 +116,22 @@ export default {
       value: 0,
       unitType: null,
       identifier: 'vessel-entry'
+    },
+  ],
+  velocity: [
+    {
+      name: 'density',
+      value: null,
+      unit: 'kg/m3',
+      unitType: 'density',
+      unitFactor: 1,
+    },
+    {
+      name: 'ρv2',
+      value: null,
+      unit: 'kg/ms2',
+      unitType: 'roV2',
+      unitFactor: 1,
     },
   ],
 };

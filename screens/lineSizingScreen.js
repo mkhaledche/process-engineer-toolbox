@@ -24,7 +24,6 @@ const lineSizingCalculations = [
       initValue: '0.2',
       unit: 'bar/km',
     },
-    calculateDensity: true,
   },
   {
     label: 'Pump Discharge',
@@ -32,6 +31,14 @@ const lineSizingCalculations = [
     maxVel: { value: '4.5', unit: 'm/s' },
     maxDeltaP: { initValue: '1', unit: 'bar/km' },
   },
+    {
+    label: 'Vapor',
+    value: 'vapor',
+    maxVel: { value: '', unit: 'm/s' },
+    maxDeltaP: { initValue: '1', unit: 'bar/km' },
+    calculateDensity: true,
+  },
+
 ];
 
 const lineSizingCalculationInputs = [
@@ -59,7 +66,7 @@ const lineSizingCalculationInputs = [
   },
   {
     name: 'Pipe diameter',
-    value: '1',
+    value: '',
     unit: 'in',
     unitType: 'size',
     unitFactor: 1,
@@ -115,6 +122,23 @@ const lineSizingCriteria = [
     unitType: 'dpc',
     unitFactor: 1,
   },
+  {
+    service: 'Vapor',
+    criteria: 'Maximum Velocity',
+    value: '',
+    unit: 'm/s',
+    unitType: 'velocity',
+    unitFactor: 1,
+    toBeCalculated: true,
+  },
+  {
+    service: 'Vapor',
+    criteria: 'Maximum Pressure Drop',
+    value: '',
+    unit: 'bar/km',
+    unitType: 'dpc',
+    unitFactor: 1,
+  },
 ];
 
 const LineSizingScreen = props => {
@@ -125,6 +149,7 @@ const LineSizingScreen = props => {
       calculationInputs: lineSizingCalculationInputs,
       sizingCriteria: lineSizingCriteria,
       sideCalc: {},
+      buttonDisabled: false,
     }
   );
 
@@ -159,6 +184,7 @@ LineSizingScreen.navigationOptions = navData => {
   return {
     headerTitle: 'Line Sizing',
     headerRight: () => {
+
       if (hasChosenAction) {
         return (
           <HeaderButtons HeaderButtonComponent={HeaderButton}>
@@ -168,10 +194,7 @@ LineSizingScreen.navigationOptions = navData => {
                 Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'
               }
               onPress={() => {
-                Keyboard.dismiss();
-                setTimeout(() => {
-                  navData.navigation.navigate('Results', { inputData });
-                }, 500);
+                navData.navigation.navigate('Results', { inputData });
               }}
             />
           </HeaderButtons>

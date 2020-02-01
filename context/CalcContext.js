@@ -26,7 +26,13 @@ const calcReducer = (state, action) => {
       return { ...state, calculationInputs, selectedCalc };
     }
     case 'SEND_INPUT': {
-      const [inputs, criteria, inputUnits, criteriaUnits] = action.value;
+      const [
+        inputs,
+        criteria,
+        inputUnits,
+        criteriaUnits,
+        buttonEnabled,
+      ] = action.value;
 
       let calculationInputs = [];
 
@@ -44,7 +50,8 @@ const calcReducer = (state, action) => {
           { ...criteria[j], unit: criteriaUnits[j] },
         ];
       }
-      return { ...state, calculationInputs, sizingCriteria };
+
+      return { ...state, calculationInputs, sizingCriteria, buttonEnabled };
     }
 
     case 'SEND_SIDE_INPUT': {
@@ -78,12 +85,13 @@ const calcReducer = (state, action) => {
             sideCalcInput[2].unitFactor
           : parseFloat(sideCalcInput[2].value);
 
-      const density = (pressure * molwt) / (0.082 * (temperature + 273));
+      let density = (pressure * molwt) / (0.082 * (temperature + 273));
 
       const relatedInputIndex = state.calculationInputs.findIndex(
         a => a.unitType === calcType
       );
 
+      density = Math.round(density * 1000) / 1000;
       const relatedInput = {
         ...state.calculationInputs[1],
         value: density.toString(),
@@ -102,8 +110,7 @@ const calcReducer = (state, action) => {
       const [size, calcType, schedule, updateValue, hideModal] = action.value;
       const { calculationInputs } = state;
       const pipeID = pipeSizeVsSchedule[size][schedule];
-      calculationInputs[3].value =
-        pipeID !== null ? pipeID.toString() : 'Schedule N/A for this size';
+      calculationInputs[3].value = pipeID.toString();
       updateValue(calculationInputs);
       hideModal();
       return { ...state, calculationInputs };
@@ -119,19 +126,46 @@ const calcReducer = (state, action) => {
         pipeSizeVseqLength[nominalSize]['length-factor'];
 
       for (let j = 1; j < sideCalcInput.length; j++) {
-        
+        if (sideCalcInput[j].value === '') {
+          sideCalcInput[j].value = 0;
+        }
         calculatedDistance =
           calculatedDistance +
           parseFloat(sideCalcInput[j].value) *
             pipeSizeVseqLength[nominalSize][sideCalcInput[j].identifier] *
             0.3048;
       }
-
-      calculationInputs[4].value = parseFloat(calculatedDistance).toString();
+      calculatedDistance =
+        Math.round(calculatedDistance * 1000) / 1000;
+      calculationInputs[4].value = calculatedDistance.toString();
       updateValue(calculationInputs);
 
       hideModal();
+
       return { ...state, calculationInputs };
+    }
+
+    case 'CALCULATE_VELOCITY': {
+      const [sideCalcInput, calcType, updateValue, hideModal] = action.value;
+      const { calculationInputs, sizingCriteria } = state;
+      const density = sideCalcInput[0].value / sideCalcInput[0].unitFactor;
+      const momentum = sideCalcInput[1].value / sideCalcInput[1].unitFactor;
+
+      let calculatedVelocity = Math.sqrt(momentum / density);
+
+      for (let j = 0; j < sizingCriteria.length; j++) {
+        if (
+          sizingCriteria[j].unitType === calcType &&
+          sizingCriteria[j].toBeCalculated === true
+        ) {
+          sizingCriteria[j].value = calculatedVelocity.toString();
+        }
+      }
+
+      updateValue(sizingCriteria);
+
+      hideModal();
+      return { ...state, sizingCriteria };
     }
 
     default:

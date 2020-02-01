@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -20,6 +20,13 @@ import CalculateModal from './UI/CalculateModal';
 import RNPickerSelect from 'react-native-picker-select';
 import sideCalculations from '../data/sideCalculations';
 import { Ionicons } from '@expo/vector-icons';
+import {
+  pipeSizes,
+  pipeSchedules,
+  getNominalSize,
+  pipeSizeVseqLength,
+} from '../data/pipeSizeData';
+import iosPickerIcon from '../components/UI/iosPickerIcon';
 
 const CalcInput = props => {
   const [state, dispatch] = useContext(CalcContext);
@@ -44,7 +51,7 @@ const CalcInput = props => {
     initCriteriaUnits = [...initCriteriaUnits, input.unit];
   });
 
-  let modals = { density: false, size: false, length: false };
+  let modals = { density: false, size: false, length: false, velocity: false };
 
   const [inputValue, setInputValue] = useState(calculationInputs);
   const [criteria, setCriteria] = useState(filteredCriteria);
@@ -52,48 +59,56 @@ const CalcInput = props => {
   const [criteriaUnits, setCriteriaUnits] = useState(initCriteriaUnits);
   const [basis, setBasis] = useState('volumetric');
   const [showModal, setShowModal] = useState(modals);
-
-  const iosPickerIcon = () => {
-    return <Ionicons name="md-arrow-down" size={16} color="gray" />;
-  };
+  const [typingTimer, setTypingTimer] = useState(null);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   let pickerPlaceholder;
 
+  const inputNominalSize = getNominalSize(state.calculationInputs[3].value);
+
   return (
     <View style={typicalStyles.inputsParent}>
-      <Text>Flow Basis</Text>
-      <RNPickerSelect
-        selectedValue={basis}
-        Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
-        onValueChange={itemValue => {
-          setBasis(itemValue);
+      <View style={{ marginVertical: 10 }}>
+        <Text style={{ marginVertical: 10, fontSize: 16 }}>Flow Basis</Text>
+        <RNPickerSelect
+          selectedValue={basis}
+          Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
+          style={Platform.OS === 'ios'
+            ? {...pickerSelectStyles,
+              iconContainer: {
+                top: 10,
+                right: '30%',
+              }} : pickerSelectStyles}
+          onValueChange={itemValue => {
+            setBasis(itemValue);
 
-          let updatedValue = inputValue.map(a => {
-            return { ...a };
-          });
+            let updatedValue = inputValue.map(a => {
+              return { ...a };
+            });
 
-          let unitType = itemValue === 'mass' ? 'mFR' : 'vFR';
-          updatedValue[0].unitType = unitType;
-          updatedValue[0].unit = inputUnits[unitType][0].value;
-          updatedValue[0].value = '';
-          setInputValue(updatedValue);
+            let unitType = itemValue === 'mass' ? 'mFR' : 'vFR';
+            updatedValue[0].unitType = unitType;
+            updatedValue[0].unit = inputUnits[unitType][0].value;
+            updatedValue[0].value = '';
+            setInputValue(updatedValue);
 
-          let updatedUnit = units.map(a => a);
-          updatedUnit[0] = inputUnits[unitType][0].value;
-          setUnits(updatedUnit);
-          pickerPlaceholder = updatedUnit[0];
+            let updatedUnit = units.map(a => a);
+            updatedUnit[0] = inputUnits[unitType][0].value;
+            setUnits(updatedUnit);
+            pickerPlaceholder = updatedUnit[0];
 
-          dispatch({
-            type: 'SEND_INPUT',
-            value: [updatedValue, criteria, updatedUnit, criteriaUnits],
-          });
-        }}
-        placeholder={{}}
-        items={[
-          { label: 'Volumetric', value: 'volumetric' },
-          { label: 'Mass', value: 'mass' },
-        ]}
-      />
+            dispatch({
+              type: 'SEND_INPUT',
+              value: [updatedValue, criteria, updatedUnit, criteriaUnits],
+            });
+          }}
+          placeholder={{}}
+          items={[
+            { label: 'Volumetric', value: 'volumetric' },
+            { label: 'Mass', value: 'mass' },
+          ]}
+        />
+      </View>
 
       {calculationInputs.map((param, index) => {
         return (
@@ -108,19 +123,49 @@ const CalcInput = props => {
                       : inputValue[index].value
                   }
                   onChangeText={e => {
-                    let t = 0;
-                    if (isNaN(parseFloat(e)) || e !== '') {
+                    if (!isNaN(Number(e))) {
                       let updatedValue = inputValue.map(a => {
                         return { ...a };
                       });
+
                       updatedValue[index].value = e;
                       setInputValue(updatedValue);
-                      setInterval(() => {
-                        t = t + 100;
-                        if (t === 500) {
-                          console.log(t);
-                        }
-                      }, 100);
+
+                      if (typingTimer) {
+                        setButtonDisabled(true);
+                        clearTimeout(typingTimer);
+                      }
+
+                      setTypingTimer(
+                        setTimeout(() => {
+                          dispatch({
+                            type: 'SEND_INPUT',
+                            value: [
+                              updatedValue,
+                              criteria,
+                              units,
+                              criteriaUnits,
+                              buttonDisabled,
+                            ],
+                          });
+                          if (
+                            param.unitType === 'size' &&
+                            Array.isArray(state.length)
+                          ) {
+                            dispatch({
+                              type: 'CALCULATE_LENGTH',
+                              value: [
+                                state.length,
+                                'length',
+                                input => {
+                                  setInputValue(input);
+                                },
+                                () => setShowModal({ ...showModal }),
+                              ],
+                            });
+                          }
+                        }, 200)
+                      );
                     }
                   }}
                   style={
@@ -129,12 +174,6 @@ const CalcInput = props => {
                       : pickerSelectStyles.inputAndroid
                   }
                   keyboardType="decimal-pad"
-                  onBlur={() => {
-                    dispatch({
-                      type: 'SEND_INPUT',
-                      value: [inputValue, criteria, units, criteriaUnits],
-                    });
-                  }}
                 />
               </View>
               {param.toBeCalculated && (
@@ -159,6 +198,17 @@ const CalcInput = props => {
                   mode="dialog"
                   selectedValue={units[index]}
                   itemKey={index}
+                  style={
+                    Platform.OS === 'ios'
+                      ? {
+                          ...pickerSelectStyles.inputIOS,
+                          iconContainer: {
+                            top: 7,
+                            right: 10,
+                          },
+                        }
+                      : pickerSelectStyles.inputAndroid
+                  }
                   Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
                   onValueChange={itemValue => {
                     let updatedUnits = units.map(a => a);
@@ -180,13 +230,12 @@ const CalcInput = props => {
                       (parseFloat(convertedValue[index].value) *
                         conversionFactor) /
                       convertedValue[index].unitFactor;
-                    convertedValue[index].value = convertedValue[
-                      index
-                    ].value.toString();
                     convertedValue[index].unit = conversionFactorObject.value;
                     convertedValue[index].unitFactor = conversionFactor;
 
-                    setInputValue(convertedValue);
+                    if (isNaN(convertedValue[index].value)) {
+                      convertedValue[index].value = 0;
+                    }
 
                     dispatch({
                       type: 'SEND_INPUT',
@@ -197,6 +246,14 @@ const CalcInput = props => {
                         criteriaUnits,
                       ],
                     });
+                    convertedValue[index].value =
+                      param.name === 'Pipe Roughness'
+                        ? convertedValue[index].value
+                        : Math.round(convertedValue[index].value * 1000) / 1000;
+                    convertedValue[index].value = convertedValue[
+                      index
+                    ].value.toString();
+                    setInputValue(convertedValue);
                   }}
                   placeholder={
                     Platform.OS === 'ios' && index === 0
@@ -220,21 +277,32 @@ const CalcInput = props => {
                 <TextInput
                   value={criteria[index].value}
                   onChangeText={e => {
-                    if (isNaN(parseFloat(e)) || e !== '') {
+                    if (!isNaN(Number(e))) {
                       let updatedCriteria = criteria.map(a => {
                         return { ...a };
                       });
                       updatedCriteria[index].value = e;
                       setCriteria(updatedCriteria);
+
+                      if (typingTimer) {
+                        clearTimeout(typingTimer);
+                      }
+                      setTypingTimer(
+                        setTimeout(() => {
+                          dispatch({
+                            type: 'SEND_INPUT',
+                            value: [
+                              inputValue,
+                              updatedCriteria,
+                              units,
+                              criteriaUnits,
+                            ],
+                          });
+                        }, 200)
+                      );
                     }
                   }}
                   keyboardType="decimal-pad"
-                  onBlur={() => {
-                    dispatch({
-                      type: 'SEND_INPUT',
-                      value: [inputValue, criteria, units, criteriaUnits],
-                    });
-                  }}
                   style={
                     Platform.OS === 'ios'
                       ? pickerSelectStyles.inputIOS
@@ -242,11 +310,46 @@ const CalcInput = props => {
                   }
                 />
               </View>
+              {criterion.toBeCalculated && (
+                <CalculateModal
+                  style={typicalStyles.button}
+                  visibility={showModal[criterion.unitType]}
+                  showingModal={() => {
+                    setShowModal({ ...showModal, [criterion.unitType]: true });
+                  }}
+                  hideModal={() =>
+                    setShowModal({ ...showModal, [criterion.unitType]: false })
+                  }
+                  modalData={sideCalculations[criterion.unitType]}
+                  calcType={criterion.unitType}
+                  updateValue={input => {
+                    const updatedCriteria = input.filter(
+                      criterion => criterion.service === selectedCalc[0].label
+                    );
+                    updatedCriteria.forEach(a => {
+                      a.value = Math.round(a.value * 1000) / 1000;
+                      a.value = a.value.toString();
+                    });
+                    setCriteria(updatedCriteria);
+                  }}
+                />
+              )}
               <View style={typicalStyles.picker}>
                 <RNPickerSelect
                   mode="dialog"
                   selectedValue={criteriaUnits[index]}
                   Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
+                  style={
+                    Platform.OS === 'ios'
+                      ? {
+                          ...pickerSelectStyles.inputIOS,
+                          iconContainer: {
+                            top: 7,
+                            right: 10,
+                          },
+                        }
+                      : pickerSelectStyles.inputAndroid
+                  }
                   onValueChange={itemValue => {
                     let updatedCriteriaUnits = criteriaUnits.map(a => {
                       return a;
@@ -272,12 +375,12 @@ const CalcInput = props => {
                       convertedCriterionValue[index].unitFactor;
                     convertedCriterionValue[
                       index
-                    ].value = convertedCriterionValue[index].value.toString();
-                    convertedCriterionValue[
-                      index
                     ].unitFactor = conversionFactor;
 
-                    setCriteria(convertedCriterionValue);
+                    if (isNaN(convertedCriterionValue[index].value)) {
+                      convertedCriterionValue[index].value = 0;
+                    }
+
                     dispatch({
                       type: 'SEND_INPUT',
                       value: [
@@ -287,6 +390,13 @@ const CalcInput = props => {
                         updatedCriteriaUnits,
                       ],
                     });
+                    convertedCriterionValue[index].value =
+                      Math.round(convertedCriterionValue[index].value * 1000) /
+                      1000;
+                    convertedCriterionValue[
+                      index
+                    ].value = convertedCriterionValue[index].value.toString();
+                    setCriteria(convertedCriterionValue);
                   }}
                   placeholder={{}}
                   items={inputUnits[criterion.unitType]}

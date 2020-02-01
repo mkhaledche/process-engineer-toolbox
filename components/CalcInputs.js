@@ -42,7 +42,7 @@ const CalcInputs = props => {
 
 const styles = StyleSheet.create({
   inputContainer: {
-    padding: 20,
+    padding: 5,
     flex: 1,
     justifyContent: 'flex-end',
   },

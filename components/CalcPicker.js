@@ -2,16 +2,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Picker, View, Platform } from 'react-native';
 import CalcContext from '../context/CalcContext';
 import RNPickerSelect from 'react-native-picker-select';
-import { Ionicons } from '@expo/vector-icons';
+import { pickerSelectStyles } from '../constants/styles';
+import iosPickerIcon from '../components/UI/iosPickerIcon';
 
 const CalcPicker = props => {
   const { availableCalcs } = props;
   const dispatch = useContext(CalcContext)[1];
   const display = props.initialValue.value === null ? 'flex' : 'none';
 
-  const iosPickerIcon = () => {
-    return <Ionicons name="md-arrow-down" size={16} color="gray" />;
-  };
 
   return (
     <View
@@ -26,10 +24,14 @@ const CalcPicker = props => {
         }}
         placeholder={{}}
         items={availableCalcs}
-        style={{
-          fontSize: 25,
-          justifyContent: 'center',
-        }}
+        style={
+          Platform.OS === 'ios'
+            ? {...pickerSelectStyles.inputIOS,
+              iconContainer: {
+                top: 7,
+                right: 10,
+              }} : pickerSelectStyles.inputAndroid
+        }
         Icon={Platform.OS === 'ios' ? iosPickerIcon : null}
       />
     </View>
